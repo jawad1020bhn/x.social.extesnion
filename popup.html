@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>XReels Exporter</title>
+<link rel="stylesheet" href="m3e/fonts.css" />
+<link rel="stylesheet" href="m3e/tokens.css" />
+<link rel="stylesheet" href="m3e/components.css" />
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+
+<div class="popup">
+
+  <!-- =======================================================================
+       Header — identity and the one fact that changes what this panel can do.
+       ======================================================================= -->
+  <header class="popup__head">
+    <span class="popup__mark" aria-hidden="true">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
+        <path d="M6 2h12a2 2 0 0 1 2 2v17.2a.8.8 0 0 1-1.2.7L12 18l-6.8 3.9A.8.8 0 0 1 4 21.2V4a2 2 0 0 1 2-2Z"/>
+      </svg>
+    </span>
+    <div class="popup__head-text">
+      <h1 class="m3e-title-medium m3e-title-medium--emphasized">XReels Exporter</h1>
+      <p class="m3e-body-small popup__subtitle" id="tabHint">Checking this tab…</p>
+    </div>
+    <button type="button" class="m3e-icon-button m3e-icon-button--s m3e-state" id="themeToggle" aria-label="Switch color scheme" title="Switch color scheme">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9" />
+        <path d="M12 3a9 9 0 0 0 0 18Z" fill="currentColor" stroke="none" />
+      </svg>
+    </button>
+  </header>
+
+  <!-- =======================================================================
+       Site switcher — the first decision is WHICH account you are working on.
+       Each site then has its own small set of jobs. A dot on a site shows a run
+       continuing there while you look at the other one.
+       ======================================================================= -->
+  <div class="sites" role="group" aria-label="Site">
+    <button type="button" class="site m3e-state" id="siteX" aria-pressed="true" data-site="x" data-label="X">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 4l14 16M19 4L5 20"/>
+      </svg>
+      <span class="site__text">
+        <span class="site__name">X</span>
+        <span class="site__meta m3e-label-small" id="siteXMeta">Bookmarks</span>
+      </span>
+      <span class="tab__dot" id="siteXDot" data-state="" hidden aria-hidden="true"></span>
+    </button>
+    <button type="button" class="site m3e-state" id="siteReddit" aria-pressed="false" data-site="reddit" data-label="Reddit">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <ellipse cx="12" cy="13.5" rx="7.5" ry="6"/>
+        <path d="M12 7.5l1.4-3.3 3.3 1"/>
+        <circle cx="9.3" cy="13" r="1" fill="currentColor" stroke="none"/>
+        <circle cx="14.7" cy="13" r="1" fill="currentColor" stroke="none"/>
+        <path d="M9.3 16.3c1.6 1.1 3.8 1.1 5.4 0"/>
+      </svg>
+      <span class="site__text">
+        <span class="site__name">Reddit</span>
+        <span class="site__meta m3e-label-small" id="siteRedditMeta">Saved · NSFW</span>
+      </span>
+      <span class="tab__dot" id="siteRedditDot" data-state="" hidden aria-hidden="true"></span>
+    </button>
+  </div>
+
+  <!-- X jobs -->
+  <div class="tabs" role="tablist" aria-label="X sections" data-site="x">
+    <button type="button" class="tab m3e-state" id="tabCapture" role="tab"
+      aria-selected="true" aria-controls="panelCapture" tabindex="0"
+      data-tab="capture" data-site="x" data-label="Capture">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h12a1 1 0 0 1 1 1v16.5a.5.5 0 0 1-.8.4L12 17l-6.2 3.9a.5.5 0 0 1-.8-.4V4a1 1 0 0 1 1-1Z"/>
+      </svg>
+      <span>Capture</span>
+      <span class="tab__dot" id="captureDot" data-state="" hidden aria-hidden="true"></span>
+    </button>
+
+    <button type="button" class="tab m3e-state" id="tabUnfollow" role="tab"
+      aria-selected="false" aria-controls="panelUnfollow" tabindex="-1"
+      data-tab="unfollow" data-site="x" data-label="Unfollow">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="9" cy="8" r="4"/>
+        <path d="M2.5 21a6.5 6.5 0 0 1 11.1-4.6"/>
+        <line x1="15.5" y1="19" x2="21.5" y2="19"/>
+      </svg>
+      <span>Unfollow</span>
+      <span class="tab__dot" id="unfollowDot" data-state="" hidden aria-hidden="true"></span>
+    </button>
+
+    <button type="button" class="tab m3e-state" id="tabUnsave" role="tab"
+      aria-selected="false" aria-controls="panelUnsave" tabindex="-1"
+      data-tab="unsave" data-site="x" data-label="Unsave">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h12v18l-6-4-6 4V3Z"/><path d="M9 9h6"/>
+      </svg>
+      <span>Unsave</span>
+      <span class="tab__dot" id="unsaveDot" data-state="" hidden aria-hidden="true"></span>
+    </button>
+
+    <button type="button" class="tab m3e-state" id="tabExport" role="tab"
+      aria-selected="false" aria-controls="panelExport" tabindex="-1"
+      data-tab="export" data-site="x" data-label="Export">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+      </svg>
+      <span>Export</span>
+    </button>
+  </div>
+
+  <!-- Reddit jobs — same glyph for the same job, so the two sites read alike. -->
+  <div class="tabs tabs--3" role="tablist" aria-label="Reddit sections" data-site="reddit" hidden>
+    <button type="button" class="tab m3e-state" id="tabRedditCapture" role="tab"
+      aria-selected="true" aria-controls="panelRedditCapture" tabindex="0"
+      data-tab="reddit-capture" data-site="reddit" data-label="Capture">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h12a1 1 0 0 1 1 1v16.5a.5.5 0 0 1-.8.4L12 17l-6.2 3.9a.5.5 0 0 1-.8-.4V4a1 1 0 0 1 1-1Z"/>
+      </svg>
+      <span>Capture</span>
+      <span class="tab__dot" id="rdCaptureDot" data-state="" hidden aria-hidden="true"></span>
+    </button>
+
+    <button type="button" class="tab m3e-state" id="tabRedditUnsave" role="tab"
+      aria-selected="false" aria-controls="panelRedditUnsave" tabindex="-1"
+      data-tab="reddit-unsave" data-site="reddit" data-label="Unsave">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 3h12v18l-6-4-6 4V3Z"/><path d="M9 9h6"/>
+      </svg>
+      <span>Unsave</span>
+      <span class="tab__dot" id="rdUnsaveDot" data-state="" hidden aria-hidden="true"></span>
+    </button>
+
+    <button type="button" class="tab m3e-state" id="tabRedditExport" role="tab"
+      aria-selected="false" aria-controls="panelRedditExport" tabindex="-1"
+      data-tab="reddit-export" data-site="reddit" data-label="Export">
+      <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+      </svg>
+      <span>Export</span>
+    </button>
+  </div>
+
+  <div class="popup__body" id="popupBody">
+
+    <!-- =====================================================================
+         X · Capture
+         ===================================================================== -->
+    <section class="panel" id="panelCapture" data-panel="capture" data-site="x" role="tabpanel" aria-labelledby="tabCapture">
+
+      <!-- Status is carried by three redundant channels: a coloured
+           container, an icon shape, and a word. Never colour alone. -->
+      <section class="status" id="statusCard" data-status="idle" aria-labelledby="statusLabel">
+        <div class="status__row">
+          <span class="status__dot" id="statusDot" aria-hidden="true"></span>
+          <div class="status__text">
+            <p class="m3e-title-medium m3e-title-medium--emphasized status__label" id="statusLabel">Idle</p>
+            <p class="m3e-body-small status__detail" id="statusDetail">No capture run yet.</p>
+          </div>
+        </div>
+
+        <!-- Wavy progress: the M3 Expressive indicator for indeterminate,
+             long-running work. Hidden entirely when not capturing. -->
+        <div class="status__progress" id="progressHost" hidden>
+          <div class="m3e-progress m3e-progress--wavy" role="progressbar"
+            aria-label="Capture in progress" aria-valuetext="Capturing">
+            <svg class="m3e-progress__wave" aria-hidden="true">
+              <defs>
+                <pattern id="m3e-wave" width="32" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M-32 5 Q-24 1 -16 5 T0 5 T16 5 T32 5 T48 5 T64 5"
+                    fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                </pattern>
+              </defs>
+              <rect class="m3e-progress__wave-fill"
+                x="-32" y="0" width="calc(100% + 64px)" height="10" fill="url(#m3e-wave)" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <!-- "Media" is what the run is FOR: a capture that finds posts but no
+           media failed in a way a post count cannot show. Duplicates are
+           scraper diagnostics and live in the activity log. -->
+      <dl class="stats" id="stats">
+        <div class="stat stat--captured m3e-state">
+          <dt class="m3e-label-small stat__label">Posts</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="statCaptured">0</dd>
+        </div>
+        <div class="stat stat--new m3e-state">
+          <dt class="m3e-label-small stat__label">New</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="statNew">0</dd>
+        </div>
+        <div class="stat stat--media m3e-state">
+          <dt class="m3e-label-small stat__label">Media</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="statMedia">0</dd>
+        </div>
+        <div class="stat stat--failed m3e-state">
+          <dt class="m3e-label-small stat__label">Failed</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="statFailed">0</dd>
+        </div>
+      </dl>
+      <p class="stats__hint" id="mediaHint">No photos or video yet</p>
+
+      <!-- One filled primary action. Everything else is subordinate — the M3
+           rule of a single filled button per view, applied literally. -->
+      <div class="controls">
+        <button type="button" class="m3e-button m3e-button--filled m3e-button--m m3e-button--block m3e-state" id="primaryBtn">
+          <span id="primaryIcon" class="m3e-button__icon">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          </span>
+          <span id="primaryLabel">Start capture</span>
+        </button>
+
+        <div class="controls__row" role="group" aria-label="Capture controls">
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="pauseBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16" />
+              <rect x="14" y="4" width="4" height="16" />
+            </svg>
+            <span>Pause</span>
+          </button>
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="stopBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </svg>
+            <span>Stop</span>
+          </button>
+        </div>
+
+        <!-- Panic is a destructive escape hatch: abort now, don't flush. It
+             keeps the error role and the lowest emphasis so it can never be
+             hit by accident, but stays one click away while a run is live. -->
+        <button type="button" class="m3e-button m3e-button--text m3e-button--xs m3e-state controls__panic"
+          id="panicBtn" disabled>Panic stop — abort without saving</button>
+      </div>
+
+      <div class="panel__foot">
+        <span class="panel__foot-note m3e-body-small">Captures every bookmark, text-only ones included.</span>
+        <button type="button" class="m3e-button m3e-button--text m3e-button--xs m3e-state controls__panic" id="resetBtn">Clear captured data</button>
+      </div>
+
+      <details class="disclosure">
+        <summary class="m3e-label-large">How it works</summary>
+        <p class="m3e-body-small">Open <strong>x.com/i/bookmarks</strong> and keep the tab open. The sweep accelerates through rendered rows and brakes at the infinite-scroll boundary, waiting on X's own bookmark responses rather than fixed delays. Posts are stored in 256-item chunks; pause and stop keep everything already saved.</p>
+      </details>
+    </section>
+
+    <!-- =====================================================================
+         X · Unfollow
+         ===================================================================== -->
+    <section class="panel" id="panelUnfollow" data-panel="unfollow" data-site="x" role="tabpanel" aria-labelledby="tabUnfollow" hidden>
+      <div class="panel__head">
+        <div>
+          <h2 class="m3e-title-small m3e-title-small--emphasized panel__title">Unfollow everyone</h2>
+          <p class="m3e-body-small panel__sub">One account at a time, at human pace. Every target is backed up locally.</p>
+        </div>
+      </div>
+
+      <dl class="stats" id="unfollowStats">
+        <div class="stat stat--uf-queued m3e-state">
+          <dt class="m3e-label-small stat__label">Queued</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="ufQueued">0</dd>
+        </div>
+        <div class="stat stat--uf-done m3e-state">
+          <dt class="m3e-label-small stat__label">Done</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="ufDone">0</dd>
+        </div>
+        <div class="stat stat--uf-failed m3e-state">
+          <dt class="m3e-label-small stat__label">Failed</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="ufFailed">0</dd>
+        </div>
+        <div class="stat stat--uf-rate m3e-state">
+          <dt class="m3e-label-small stat__label">Per min</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="ufRate">0</dd>
+        </div>
+      </dl>
+
+      <div class="status status--inline" id="unfollowCard" data-status="idle">
+        <span class="status__dot" aria-hidden="true"></span>
+        <p class="m3e-body-small unfollow__status" id="unfollowStatus" data-status="idle" aria-live="polite">Idle — no unfollow run yet.</p>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="m3e-button m3e-button--error m3e-button--m m3e-button--block m3e-state" id="ufStartBtn">
+          <span id="ufStartLabel">Start unfollow</span>
+        </button>
+        <div class="controls__row" role="group" aria-label="Unfollow controls">
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="ufPauseBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16" />
+              <rect x="14" y="4" width="4" height="16" />
+            </svg>
+            <span>Pause</span>
+          </button>
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="ufStopBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </svg>
+            <span>Stop</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel__foot">
+        <button type="button" class="m3e-button m3e-button--outlined m3e-button--xs m3e-state" id="unfollowBackup" disabled
+          title="Download a JSON backup of every account this engine has targeted">Backup JSON</button>
+        <button type="button" class="m3e-button m3e-button--text m3e-button--xs m3e-state controls__panic" id="ufResetBtn">Reset data</button>
+      </div>
+
+      <details class="disclosure">
+        <summary class="m3e-label-large">How it works</summary>
+        <p class="m3e-body-small">Sweeps your Following list from X's own responses and unfollows one account at a time — warm-up ramp, jittered gaps, wave breaks, a ~26/min ceiling and automatic backoff. Every target goes into a local JSON backup. Pause or stop any time; the engine checkpoints every 2,500 attempts.</p>
+      </details>
+    </section>
+
+    <!-- =====================================================================
+         X · Unsave
+         ===================================================================== -->
+    <section class="panel" id="panelUnsave" data-panel="unsave" data-site="x" role="tabpanel" aria-labelledby="tabUnsave" hidden>
+      <div class="panel__head">
+        <div>
+          <h2 class="m3e-title-small m3e-title-small--emphasized panel__title">Unsave all bookmarks</h2>
+          <p class="m3e-body-small panel__sub">Remove saved posts from your X account, one at a time. A local backup is saved before every removal.</p>
+        </div>
+      </div>
+
+      <dl class="stats" id="unsaveStats">
+        <div class="stat stat--us-queued m3e-state">
+          <dt class="m3e-label-small stat__label">Queued</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="usQueued">0</dd>
+        </div>
+        <div class="stat stat--us-done m3e-state">
+          <dt class="m3e-label-small stat__label">Done</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="usDone">0</dd>
+        </div>
+        <div class="stat stat--us-failed m3e-state">
+          <dt class="m3e-label-small stat__label">Failed</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="usFailed">0</dd>
+        </div>
+        <div class="stat stat--us-rate m3e-state">
+          <dt class="m3e-label-small stat__label">Per min</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="usRate">0</dd>
+        </div>
+      </dl>
+
+      <div class="status status--inline" id="unsaveCard" data-status="idle">
+        <span class="status__dot" aria-hidden="true"></span>
+        <p class="m3e-body-small unsave__status" id="unsaveStatus" data-status="idle" aria-live="polite">Idle — no unsave run yet.</p>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="m3e-button m3e-button--error m3e-button--m m3e-button--block m3e-state" id="usStartBtn">
+          <span id="usStartLabel">Unsave all bookmarks</span>
+        </button>
+        <div class="controls__row" role="group" aria-label="Unsave controls">
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="usPauseBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16" />
+              <rect x="14" y="4" width="4" height="16" />
+            </svg>
+            <span>Pause</span>
+          </button>
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="usStopBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </svg>
+            <span>Stop</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel__foot">
+        <button type="button" class="m3e-button m3e-button--outlined m3e-button--xs m3e-state" id="unsaveBackup" disabled
+          title="Download backed-up posts and the outcome of each removal">Backup JSON</button>
+        <button type="button" class="m3e-button m3e-button--text m3e-button--xs m3e-state controls__panic" id="usResetBtn">Reset data</button>
+      </div>
+
+      <div class="unsave-notice" role="note">
+        <strong class="m3e-label-large">Removes bookmarks on X</strong>
+        <p class="m3e-body-small">This is not a local reset. Removed posts disappear from your X bookmarks on every device. Your captured export is kept. There is no automatic undo.</p>
+      </div>
+      <details class="disclosure" open>
+        <summary class="m3e-label-large">Before you start</summary>
+        <ol class="unsave-checklist m3e-body-small">
+          <li>Capture and export your bookmarks first if you want an independent copy.</li>
+          <li>Open <strong>x.com/i/bookmarks</strong> in the signed-in account you want to clear. Keep that tab open.</li>
+          <li>Start and confirm. Pause or stop at any time; the in-flight request finishes before the checkpoint is saved.</li>
+          <li>Download <strong>Backup JSON</strong> to review removed posts. It preserves post data and links, not downloaded media files.</li>
+        </ol>
+      </details>
+      <details class="disclosure">
+        <summary class="m3e-label-large">Pacing, verification &amp; recovery</summary>
+        <p class="m3e-body-small">Uses X's own bookmark responses and DeleteBookmark operation, with the same warm-up, jittered gaps, wave breaks, rate governor and backoff as Unfollow. Re-reads the live feed after removals so a shrinking list cannot skip posts. Completion requires two empty live-head checks. X may withhold older or unavailable entries; completion only describes what its API returned.</p>
+        <p class="m3e-body-small">Every run checkpoints after 2,500 attempts or 3 hours. Resume is tied to the same account. Capture, Unfollow and Unsave cannot run together, even in different tabs.</p>
+      </details>
+    </section>
+
+    <!-- =====================================================================
+         X · Export
+         ===================================================================== -->
+    <section class="panel" id="panelExport" data-panel="export" data-site="x" role="tabpanel" aria-labelledby="tabExport" hidden>
+      <div class="panel__head">
+        <div>
+          <h2 class="m3e-title-small m3e-title-small--emphasized panel__title">X library export</h2>
+          <p class="m3e-body-small panel__sub" id="exportHint">Nothing captured yet.</p>
+        </div>
+      </div>
+
+      <!-- The one format the dashboard consumes is the primary action; the
+           rest are alternate shapes of the same data, not equals. -->
+      <button type="button" class="m3e-button m3e-button--filled m3e-button--m m3e-button--block m3e-state" id="exportJson"
+        title="XReels-compatible JSON export of every captured post">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v12"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+        </svg>
+        <span>XReels JSON</span>
+      </button>
+
+      <div class="export__grid">
+        <button type="button" class="m3e-button m3e-button--outlined m3e-button--s m3e-state" id="exportJsonl" title="JSON Lines (streaming)">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 4h16v16H4z"/>
+            <line x1="8" y1="9" x2="16" y2="9"/>
+            <line x1="8" y1="13" x2="16" y2="13"/>
+            <line x1="8" y1="17" x2="13" y2="17"/>
+          </svg>
+          <span>JSONL</span>
+        </button>
+        <button type="button" class="m3e-button m3e-button--outlined m3e-button--s m3e-state" id="exportCsv" title="CSV (Excel-friendly)">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <line x1="9" y1="3" x2="9" y2="21" />
+            <line x1="15" y1="3" x2="15" y2="21" />
+            <line x1="3" y1="9" x2="21" y2="9" />
+            <line x1="3" y1="15" x2="21" y2="15" />
+          </svg>
+          <span>CSV</span>
+        </button>
+        <button type="button" class="m3e-button m3e-button--outlined m3e-button--s m3e-state" id="exportMd" title="Markdown (Obsidian/Notion)">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="8" y1="13" x2="16" y2="13" />
+            <line x1="8" y1="17" x2="16" y2="17" />
+          </svg>
+          <span>Markdown</span>
+        </button>
+        <button type="button" class="m3e-button m3e-button--outlined m3e-button--s m3e-state" id="exportHtml" title="HTML (offline gallery)">
+          <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <polyline points="9 15 7 17 9 19" />
+            <polyline points="15 15 17 17 15 19" />
+          </svg>
+          <span>HTML</span>
+        </button>
+      </div>
+
+      <p class="export__note">Shift-click any format for an incremental export of posts captured since your last download.</p>
+
+      <div class="export__compat">
+        <p class="m3e-body-small">Import into XReels with <strong>Import → Upload JSON</strong>. Text-only posts come along; enable <strong>Keep text-only posts</strong> in the app to show them.</p>
+      </div>
+      <button type="button" class="m3e-button m3e-button--text m3e-button--xs m3e-state export__help" id="appHelp">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M9.1 9a3 3 0 0 1 5.8 1c0 2-3 3-3 3" />
+          <path d="M12 17h.01" />
+        </svg>
+        <span>How to import</span>
+      </button>
+
+      <section class="audit" aria-labelledby="auditTitle">
+        <div class="audit__heading">
+          <div>
+            <h3 class="m3e-label-large audit__title" id="auditTitle">Coverage check</h3>
+            <p class="m3e-body-small audit__intro">Compare saved IDs with X's timeline responses.</p>
+          </div>
+          <button type="button" class="m3e-button m3e-button--outlined m3e-button--xs m3e-state" id="runAudit" disabled>Verify</button>
+        </div>
+        <div class="audit__result" id="auditResult" hidden aria-live="polite">
+          <p class="audit__status" id="auditStatus"></p>
+          <p class="audit__metrics m3e-body-small" id="auditMetrics"></p>
+          <ul class="audit__findings" id="auditFindings"></ul>
+        </div>
+      </section>
+    </section>
+
+    <!-- =====================================================================
+         Reddit · Capture — the same shape as X capture: a status card that
+         carries the run, counters that say whether it is producing anything,
+         one primary action, and the transport pair.
+         ===================================================================== -->
+    <section class="panel" id="panelRedditCapture" data-panel="reddit-capture" data-site="reddit" role="tabpanel" aria-labelledby="tabRedditCapture" hidden>
+      <section class="status" id="rdCard" data-status="idle" aria-labelledby="rdStatusLabel">
+        <div class="status__row">
+          <span class="status__dot" aria-hidden="true"></span>
+          <div class="status__text">
+            <p class="m3e-title-medium m3e-title-medium--emphasized status__label" id="rdStatusLabel">Idle</p>
+            <p class="m3e-body-small status__detail" id="rdStatus" aria-live="polite">Nothing captured from Reddit yet.</p>
+          </div>
+        </div>
+        <div class="status__progress" id="rdProgressHost" hidden>
+          <div class="m3e-progress m3e-progress--wavy" role="progressbar"
+            aria-label="Reddit capture in progress" aria-valuetext="Capturing">
+            <svg class="m3e-progress__wave" aria-hidden="true">
+              <defs>
+                <pattern id="m3e-wave-rd" width="32" height="10" patternUnits="userSpaceOnUse">
+                  <path d="M-32 5 Q-24 1 -16 5 T0 5 T16 5 T32 5 T48 5 T64 5"
+                    fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+                </pattern>
+              </defs>
+              <rect class="m3e-progress__wave-fill"
+                x="-32" y="0" width="calc(100% + 64px)" height="10" fill="url(#m3e-wave-rd)" />
+            </svg>
+          </div>
+        </div>
+      </section>
+
+      <dl class="stats" id="redditStats">
+        <div class="stat stat--rd-saved m3e-state">
+          <dt class="m3e-label-small stat__label">NSFW saved</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="rdSaved">0</dd>
+        </div>
+        <div class="stat stat--rd-pages m3e-state">
+          <dt class="m3e-label-small stat__label">Pages</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="rdPages">0</dd>
+        </div>
+        <div class="stat stat--rd-videos m3e-state">
+          <dt class="m3e-label-small stat__label">Videos</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="rdVideos">0</dd>
+        </div>
+        <div class="stat stat--rd-skipped m3e-state">
+          <dt class="m3e-label-small stat__label">SFW skipped</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="rdSkipped">0</dd>
+        </div>
+      </dl>
+      <p class="stats__hint" id="rdHint">Only over-18 posts are kept. Media is stored as links, not files.</p>
+
+      <div class="controls" id="rdControls">
+        <button type="button" class="m3e-button m3e-button--filled m3e-button--m m3e-button--block m3e-state" id="rdStartBtn" disabled>
+          <span class="m3e-button__icon" id="rdStartIcon">
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+          </span>
+          <span id="rdStartLabel">Start capture</span>
+        </button>
+        <div class="controls__row" role="group" aria-label="Reddit capture controls">
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="rdPauseBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16" />
+              <rect x="14" y="4" width="4" height="16" />
+            </svg>
+            <span>Pause</span>
+          </button>
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="rdStopBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </svg>
+            <span>Stop</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel__foot">
+        <span class="panel__foot-note m3e-body-small" id="rdAccount">No account captured yet.</span>
+        <button type="button" class="m3e-button m3e-button--text m3e-button--xs m3e-state controls__panic" id="rdResetBtn" disabled>Reset capture</button>
+      </div>
+
+      <details class="disclosure" open>
+        <summary class="m3e-label-large">Before you start</summary>
+        <ol class="unsave-checklist m3e-body-small">
+          <li>Log in to <strong>old.reddit.com</strong> and turn on <strong>I am over eighteen</strong> in preferences — Reddit hides NSFW rows otherwise.</li>
+          <li>Open <strong>old.reddit.com/user/&lt;you&gt;/saved</strong> in this tab and reload it once after installing or updating.</li>
+          <li>Start. The run reads this page, then follows the <em>next</em> links with your own session. Pause and stop keep the position.</li>
+        </ol>
+      </details>
+      <details class="disclosure">
+        <summary class="m3e-label-large">How it works</summary>
+        <p class="m3e-body-small">Keeps posts only (no comments) and only rows Reddit marks over-18. Pages are paced 2.5–5 s apart with longer breaks every 8–14 pages; 429 and 5xx responses back off with jitter. Reddit videos learn their real file URLs and audio track during capture so the app can play them. Reddit's saved listing stops around 1,000 items. Capture and Unsave never run together.</p>
+      </details>
+    </section>
+
+    <!-- =====================================================================
+         Reddit · Unsave — the destructive job keeps exactly the vocabulary of
+         the X one: counters, inline status, error-role primary, transport pair,
+         backup + reset in the foot, then the notice and the checklists.
+         ===================================================================== -->
+    <section class="panel" id="panelRedditUnsave" data-panel="reddit-unsave" data-site="reddit" role="tabpanel" aria-labelledby="tabRedditUnsave" hidden>
+      <div class="panel__head">
+        <div>
+          <h2 class="m3e-title-small m3e-title-small--emphasized panel__title">Unsave NSFW saved posts</h2>
+          <p class="m3e-body-small panel__sub">Removes every over-18 post from your Reddit saved list, one at a time. SFW posts and comments are never touched. A local backup is written before each removal.</p>
+        </div>
+      </div>
+
+      <dl class="stats" id="rdUnsaveStats">
+        <div class="stat stat--ru-queued m3e-state">
+          <dt class="m3e-label-small stat__label">Queued</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="ruQueued">0</dd>
+        </div>
+        <div class="stat stat--ru-done m3e-state">
+          <dt class="m3e-label-small stat__label">Done</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="ruDone">0</dd>
+        </div>
+        <div class="stat stat--ru-failed m3e-state">
+          <dt class="m3e-label-small stat__label">Failed</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="ruFailed">0</dd>
+        </div>
+        <div class="stat stat--ru-rate m3e-state">
+          <dt class="m3e-label-small stat__label">Per min</dt>
+          <dd class="m3e-title-large m3e-title-large--emphasized m3e-tabular stat__value" id="ruRate">0</dd>
+        </div>
+      </dl>
+
+      <div class="status status--inline" id="rdUnsaveCard" data-status="idle">
+        <span class="status__dot" aria-hidden="true"></span>
+        <p class="m3e-body-small unsave__status" id="rdUnsaveStatus" data-status="idle" aria-live="polite">Idle — no NSFW saved posts removed.</p>
+      </div>
+
+      <div class="controls">
+        <button type="button" class="m3e-button m3e-button--error m3e-button--m m3e-button--block m3e-state" id="ruStartBtn">
+          <span id="ruStartLabel">Unsave NSFW saved posts</span>
+        </button>
+        <div class="controls__row" role="group" aria-label="Reddit unsave controls">
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="ruPauseBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="6" y="4" width="4" height="16" />
+              <rect x="14" y="4" width="4" height="16" />
+            </svg>
+            <span>Pause</span>
+          </button>
+          <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-state" id="ruStopBtn" disabled>
+            <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+            </svg>
+            <span>Stop</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="panel__foot">
+        <button type="button" class="m3e-button m3e-button--outlined m3e-button--xs m3e-state" id="ruBackupBtn" disabled
+          title="Download the backed-up posts and the confirmed outcome of each removal">Backup JSON</button>
+        <button type="button" class="m3e-button m3e-button--text m3e-button--xs m3e-state controls__panic" id="ruResetBtn">Reset data</button>
+      </div>
+
+      <div class="unsave-notice" role="note">
+        <strong class="m3e-label-large">Removes saved posts on Reddit</strong>
+        <p class="m3e-body-small">This is not a local reset. Unsaved posts leave your Reddit saved list on every device. Your captured Reddit library is kept. There is no automatic undo — only the backup.</p>
+      </div>
+      <details class="disclosure" open>
+        <summary class="m3e-label-large">Before you start</summary>
+        <ol class="unsave-checklist m3e-body-small">
+          <li>Run <strong>Capture</strong> and <strong>Export</strong> first if you want an archive with playable video URLs. The backup keeps post data and links only.</li>
+          <li>Stay logged in on <strong>old.reddit.com</strong> with <strong>I am over eighteen</strong> enabled, and open <strong>old.reddit.com/user/&lt;you&gt;/saved</strong> in this tab. Keep it open.</li>
+          <li>Start and confirm. Pause or stop at any time; the in-flight request finishes before the checkpoint is saved.</li>
+          <li>Download <strong>Backup JSON</strong> afterwards. It imports into XReels like a normal Reddit export.</li>
+        </ol>
+      </details>
+      <details class="disclosure">
+        <summary class="m3e-label-large">Pacing, verification &amp; recovery</summary>
+        <p class="m3e-body-small">Replays old.reddit's own unsave request with your session's modhash, so nothing is sent without Reddit's CSRF token. Same warm-up, jittered gaps, wave breaks, rate governor and backoff as the X engines, tuned to ~14/min for Reddit's tighter web limits. Only Reddit's explicit success counts as removed; HTML, errors and unknown replies keep the post queued and stop for review.</p>
+        <p class="m3e-body-small">Removing posts shifts Reddit's pagination, so the live list is re-read from the top after every batch. Completion needs two clean sweeps of the whole list plus a final session check (logged in, same account, NSFW visible). A post Reddit keeps listing after a confirmed removal is retried once, then the run pauses instead of claiming completion. Each run checkpoints after 1,500 attempts or 3 hours; resume is tied to the same account.</p>
+      </details>
+    </section>
+
+    <!-- =====================================================================
+         Reddit · Export
+         ===================================================================== -->
+    <section class="panel" id="panelRedditExport" data-panel="reddit-export" data-site="reddit" role="tabpanel" aria-labelledby="tabRedditExport" hidden>
+      <div class="panel__head">
+        <div>
+          <h2 class="m3e-title-small m3e-title-small--emphasized panel__title">Reddit library export</h2>
+          <p class="m3e-body-small panel__sub" id="rdExportHint">Nothing captured yet.</p>
+        </div>
+      </div>
+
+      <button type="button" class="m3e-button m3e-button--filled m3e-button--m m3e-button--block m3e-state" id="rdExport" disabled
+        title="JSON of every NSFW-tagged saved post captured from Reddit">
+        <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 3v12"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"/>
+        </svg>
+        <span>NSFW saved JSON</span>
+      </button>
+      <button type="button" class="m3e-button m3e-button--tonal m3e-button--s m3e-button--block m3e-state" id="rdMediaBtn" disabled>
+        <span id="rdMediaLabel">Download videos (0)</span>
+      </button>
+      <p class="export__note" id="rdMediaNote">Videos download into Downloads/xreels-media/ as separate video and audio files, named the way the app's local media folder expects.</p>
+
+      <div class="export__compat">
+        <p class="m3e-body-small">Rename the file to <strong>r-posts.json</strong> and place it in the app's <strong>data/</strong> folder next to <strong>x-posts.json</strong>, or use <strong>Import → Upload JSON</strong>. <strong>Settings → Sources</strong> shows or hides Reddit posts separately.</p>
+      </div>
+    </section>
+  </div>
+
+  <!-- =======================================================================
+       Activity — collapsed by default; its summary keeps the latest line in
+       view so a silent run never looks like a dead one.
+       ======================================================================= -->
+  <details class="log" id="logPanel">
+    <summary class="log__summary m3e-state">
+      <svg class="log__chevron" viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6" />
+      </svg>
+      <span class="m3e-label-large log__title">Activity</span>
+      <span class="log__preview m3e-body-small" id="logPreview">Nothing yet</span>
+      <span class="log__count m3e-tabular" id="logCount">0</span>
+    </summary>
+    <ol class="log__list" id="log" aria-live="polite" aria-relevant="additions"></ol>
+  </details>
+
+  <footer class="popup__foot">
+    <span class="version-badge" id="versionBadge">v1.6.0 · M3E</span>
+    <span class="popup__foot-note m3e-body-small">Runs continue in their tab when this panel is closed.</span>
+  </footer>
+</div>
+
+<!-- Confirm dialog + scrim -->
+<div class="m3e-scrim" id="scrim" data-open="false"></div>
+<div class="m3e-dialog dialog" id="dialog" role="dialog" aria-modal="true"
+  aria-labelledby="dialogTitle" aria-hidden="true" data-open="false">
+  <div class="m3e-dialog__header">
+    <h2 class="m3e-title-large m3e-title-large--emphasized m3e-dialog__title" id="dialogTitle"></h2>
+  </div>
+  <div class="m3e-dialog__content" id="dialogContent"></div>
+  <div class="m3e-dialog__actions" id="dialogActions"></div>
+</div>
+
+<div class="m3e-snackbar" id="snackbar" role="status" aria-live="polite" data-open="false">
+  <span class="m3e-snackbar__text"></span>
+  <button class="m3e-snackbar__action" hidden></button>
+</div>
+
+<script src="m3e/color.js"></script>
+<script src="m3e/theme.js"></script>
+<script src="m3e/interactions.js"></script>
+<script src="store.js"></script>
+<script src="audit.js"></script>
+<script src="popup.js"></script>
+<script src="reddit-saved.js"></script>
+<script src="reddit-video.js"></script>
+<script src="reddit-panel.js"></script>
+<script src="reddit-unsave-panel.js"></script>
+</body>
+</html>

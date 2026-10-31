@@ -1,0 +1,73 @@
+{
+  "manifest_version": 3,
+  "name": "XReels Exporter",
+  "version": "1.6.0",
+  "minimum_chrome_version": "116",
+  "description": "X and Reddit, one side panel: verified bookmark and saved-post capture, paced unfollowing, and resumable unsave engines with local backups.",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "downloads",
+    "sidePanel"
+  ],
+  "host_permissions": [
+    "https://x.com/*",
+    "https://old.reddit.com/*",
+    "https://v.redd.it/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "XReels Exporter"
+  },
+  "side_panel": {
+    "default_path": "popup.html"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://x.com/*"
+      ],
+      "js": [
+        "page.js",
+        "bridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://x.com/*"
+      ],
+      "js": [
+        "engine-lock.js",
+        "timeline.js",
+        "bookmarks.js",
+        "following.js",
+        "pacing.js",
+        "store.js",
+        "content.js",
+        "unfollow.js",
+        "unsave.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://old.reddit.com/*"
+      ],
+      "js": [
+        "engine-lock.js",
+        "pacing.js",
+        "reddit-dom.js",
+        "reddit-saved.js",
+        "reddit-removal.js",
+        "reddit-video.js",
+        "reddit-capture.js",
+        "reddit-unsave.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ]
+}
